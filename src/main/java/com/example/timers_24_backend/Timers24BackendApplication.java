@@ -10,6 +10,5 @@ public class Timers24BackendApplication {
         SpringApplication.run(Timers24BackendApplication.class, args);
     }
 
-    system.out.println("Hello World");
 }
 
