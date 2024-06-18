@@ -1,12 +1,13 @@
 package com.example.timers_24_backend.entity;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.Id;
+import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import org.hibernate.annotations.Cascade;
 
+import java.util.List;
+import java.util.Set;
 import java.util.UUID;
 @Entity
 @Getter
@@ -21,6 +22,9 @@ public class Hotel {
     private String city;
     private int zip;
     private String country;
+
+    @OneToMany(mappedBy = "hotel", cascade = CascadeType.ALL, orphanRemoval = true)
+    private Set<Room> rooms;
 
     public Hotel(String name, String street, String city, int zip, String country) {
 
