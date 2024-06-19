@@ -10,6 +10,7 @@ import lombok.Setter;
 
 import java.time.LocalDate;
 
+import java.time.LocalDateTime;
 import java.util.UUID;
 
 @Entity
@@ -23,6 +24,8 @@ public class Reservation{
     private UUID id;
     private LocalDate reservationDate;
     private int price;
+    private LocalDateTime created;
+    private LocalDateTime updated;
 
     @ManyToOne
     private Room room;
@@ -33,5 +36,8 @@ public class Reservation{
     public Reservation(LocalDate reservationDate, int price) {
         this.reservationDate = reservationDate;
         this.price = price;
+        this.created = LocalDateTime.now();
+        this.updated = LocalDateTime.now();
+
     }
 }
