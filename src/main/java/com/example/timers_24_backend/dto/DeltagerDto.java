@@ -6,6 +6,7 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
@@ -19,7 +20,7 @@ public class DeltagerDto {
     private int alder;
     private String klub;
     private List<ResultatDto> resultater;
-    private List<UUID> discipliner;
+    private List<UUID> discipliner = new ArrayList<>();
 
     public DeltagerDto( UUID id , String navn, String kon, int alder, String klub) {
         this.id = id;
