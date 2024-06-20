@@ -1,8 +1,10 @@
 package com.example.timers_24_backend.api;
 
 import com.example.timers_24_backend.dto.DeltagerDto;
+import com.example.timers_24_backend.dto.DisciplinDto;
 import com.example.timers_24_backend.service.DeltagerService;
 import jakarta.annotation.PostConstruct;
+import jakarta.xml.ws.Response;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -64,6 +66,7 @@ public class DeltagerController {
         return ResponseEntity.ok(deltagerDtoList);
     }
 
+
     @GetMapping("/{id}")
     public ResponseEntity<DeltagerDto> getDeltagerById(@PathVariable UUID id) {
         DeltagerDto deltagerDto = deltagerService.getDeltagerById(id);
@@ -91,12 +94,12 @@ public class DeltagerController {
     }
 
     @PutMapping("/{deltagerId}/addDisciplin/{disciplinId}")
-    public ResponseEntity<DeltagerDto> addDisciplinToDeltager(@PathVariable UUID deltagerId, @PathVariable UUID disciplinId) {
+    public String addDisciplinToDeltager(@PathVariable UUID deltagerId, @PathVariable UUID disciplinId) {
         DeltagerDto updatedDeltager = deltagerService.addDisciplinToDeltager(deltagerId, disciplinId);
         if (updatedDeltager != null) {
-            return ResponseEntity.ok(updatedDeltager);
-        } else {
-            return "Deltager ikke fundet";
+            return "Disciplin added to Deltager";
+        }  else {
+            return "Disciplin not found";
         }
     }
 

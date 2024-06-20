@@ -1,6 +1,7 @@
 package com.example.timers_24_backend.service;
 
 import com.example.timers_24_backend.dto.DeltagerDto;
+import com.example.timers_24_backend.dto.DisciplinDto;
 import com.example.timers_24_backend.dto.ResultatDto;
 import com.example.timers_24_backend.entity.Deltager;
 import com.example.timers_24_backend.entity.Disciplin;
@@ -130,7 +131,7 @@ public class DeltagerService {
     }
 
     public boolean deleteDeltager(UUID id) {
-Optional<Deltager> deltagerOptional = deltagerRepository.findById(id);
+        Optional<Deltager> deltagerOptional = deltagerRepository.findById(id);
         if (deltagerOptional.isPresent()) {
             deltagerRepository.deleteById(id);
             return true;
@@ -149,6 +150,17 @@ Optional<Deltager> deltagerOptional = deltagerRepository.findById(id);
         List<Deltager> deltagerList = deltagerRepository.findAll();
         return deltagerList.stream()
                 .map(this::convertToDto)
+                .collect(Collectors.toList());
+    }
+
+    public List<DisciplinDto> getAllDiscipliner() {
+        List<Disciplin> disciplins = disciplinRepository.findAll();
+        return disciplins.stream()
+                .map(disciplin -> new DisciplinDto(
+                        disciplin.getId(),
+                        disciplin.getNavn(),
+                        disciplin.getResultattype(),
+                        disciplin.getDeltagere().stream().map(Deltager::getId).collect(Collectors.toList())))
                 .collect(Collectors.toList());
     }
 }
