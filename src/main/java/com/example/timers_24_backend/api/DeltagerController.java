@@ -96,7 +96,7 @@ public class DeltagerController {
         if (updatedDeltager != null) {
             return ResponseEntity.ok(updatedDeltager);
         } else {
-            return ResponseEntity.notFound().build();
+            return "Deltager ikke fundet";
         }
     }
 

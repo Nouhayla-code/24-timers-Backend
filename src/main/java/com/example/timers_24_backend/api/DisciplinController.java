@@ -3,6 +3,7 @@ package com.example.timers_24_backend.api;
 import com.example.timers_24_backend.dto.DisciplinDto;
 import com.example.timers_24_backend.entity.Disciplin;
 import com.example.timers_24_backend.service.DisciplinService;
+import jakarta.annotation.PostConstruct;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -20,8 +21,10 @@ public class DisciplinController {
     @Autowired
     public DisciplinController(DisciplinService disciplinService) {
         this.disciplinService = disciplinService;
+    }
 
-        // Tilføj dine ønskede discipliner direkte i konstruktøren
+    @PostConstruct
+    public void init() {
         List<Disciplin> disciplins = new ArrayList<>();
         disciplins.add(new Disciplin("1-milløb (atletik)", "time"));
         disciplins.add(new Disciplin("10.000-meterløb (atletik)", "time"));
@@ -45,8 +48,10 @@ public class DisciplinController {
         disciplins.add(new Disciplin("Femkamp (atletik)", "points"));
         disciplins.add(new Disciplin("Forhindringsløb (atletik)", "time"));
         disciplins.add(new Disciplin("Halvmaratonløb (løbesport)", "time"));
+        disciplins.add(new Disciplin("Hammerkast (atletik)", "distance"));
+        disciplins.add(new Disciplin("Højdespring (atletik)", "height"));
+        disciplins.add(new Disciplin("Højdespring uden tilløb (atletik)", "height"));
 
-        // Tilføj discipliner til service
         disciplinService.createDisciplins(disciplins);
     }
 
@@ -66,7 +71,6 @@ public class DisciplinController {
         }
     }
 
-
     @PutMapping("/{id}")
     public ResponseEntity<DisciplinDto> addDeltagerToDisciplin(@PathVariable UUID id, @RequestBody List<UUID> deltagerId) {
         DisciplinDto disciplinDto = disciplinService.addDeltagerToDisciplin(id, deltagerId);
@@ -76,6 +80,4 @@ public class DisciplinController {
             return ResponseEntity.notFound().build();
         }
     }
-
-
 }
