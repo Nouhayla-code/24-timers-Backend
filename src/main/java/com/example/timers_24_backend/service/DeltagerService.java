@@ -1,12 +1,17 @@
 package com.example.timers_24_backend.service;
 
 import com.example.timers_24_backend.dto.DeltagerDto;
+import com.example.timers_24_backend.dto.ResultatDto;
 import com.example.timers_24_backend.entity.Deltager;
+import com.example.timers_24_backend.entity.Disciplin;
+import com.example.timers_24_backend.entity.Resultat;
 import com.example.timers_24_backend.exception.NotFoundException;
 import com.example.timers_24_backend.repository.DeltagerRepository;
+import com.example.timers_24_backend.repository.DisciplinRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
@@ -16,67 +21,86 @@ import java.util.stream.Collectors;
 public class DeltagerService {
 
     private final DeltagerRepository deltagerRepository;
+    private final DisciplinRepository disciplinRepository;
 
     @Autowired
-    public DeltagerService(DeltagerRepository deltagerRepository) {
+    public DeltagerService(DeltagerRepository deltagerRepository, DisciplinRepository disciplinRepository) {
         this.deltagerRepository = deltagerRepository;
+        this.disciplinRepository = disciplinRepository;
     }
 
-
+    // Opret ny deltager med eller uden disciplin
     public DeltagerDto createDeltager(DeltagerDto deltagerDto) {
         Deltager deltager = convertToEntity(deltagerDto);
+
+        // Konverter og sæt Resultat entiteter
+        deltager.setResultater(convertToResultatEntities(deltagerDto.getResultater()));
+
+        // Hvis discipliner er angivet, tilføj dem til deltageren
+        if (deltagerDto.getDiscipliner() != null && !deltagerDto.getDiscipliner().isEmpty()) {
+            List<Disciplin> discipliner = fetchDiscipliner(deltagerDto.getDiscipliner());
+            deltager.setDiscipliner(discipliner);
+        }
+
+        // Gem deltager entitet
         Deltager savedDeltager = deltagerRepository.save(deltager);
         return convertToDto(savedDeltager);
     }
 
-    public DeltagerDto getDeltagerById(UUID id) {
-        Optional<Deltager> optionalDeltager = deltagerRepository.findById(id);
-        return optionalDeltager.map(this::convertToDto).orElse(null);
-    }
+    // Opdater eksisterende deltager med nye oplysninger og/eller discipliner
+    public DeltagerDto updateDeltager(UUID deltagerId, DeltagerDto deltagerDto) {
+        Deltager deltager = deltagerRepository.findById(deltagerId)
+                .orElseThrow(() -> new NotFoundException("Deltager not found with id: " + deltagerId));
 
-    public List<DeltagerDto> getAllDeltager() {
-        List<Deltager> deltagere = deltagerRepository.findAll();
-        return deltagere.stream().map(this::convertToDto).collect(Collectors.toList());
-    }
+        // Opdater deltager detaljer
+        deltager.setNavn(deltagerDto.getNavn());
+        deltager.setAlder(deltagerDto.getAlder());
+        deltager.setKon(deltagerDto.getKon());
+        deltager.setKlub(deltagerDto.getKlub());
 
-    public DeltagerDto updateDeltager(UUID id, DeltagerDto deltagerDto) {
-        Optional<Deltager> optionalDeltager = deltagerRepository.findById(id);
-        if (optionalDeltager.isPresent()) {
-            Deltager existingDeltager = optionalDeltager.get();
-            existingDeltager.setNavn(deltagerDto.getNavn());
-            existingDeltager.setAlder(deltagerDto.getAlder());
-            existingDeltager.setKon(deltagerDto.getKon());
-            existingDeltager.setKlub(deltagerDto.getKlub());
-            existingDeltager.setResultater(deltagerDto.getResultater());
-            existingDeltager.setDiscipliner(deltagerDto.getDiscipliner());
-            Deltager updatedDeltager = deltagerRepository.save(existingDeltager);
-            return convertToDto(updatedDeltager);
-        } else {
-            throw new NotFoundException("Deltager not found with id: " + id);
+        // Konverter og sæt Resultat entiteter
+        deltager.setResultater(convertToResultatEntities(deltagerDto.getResultater()));
+
+        // Hvis discipliner er angivet, tilføj dem til deltageren
+        if (deltagerDto.getDiscipliner() != null && !deltagerDto.getDiscipliner().isEmpty()) {
+            List<Disciplin> discipliner = fetchDiscipliner(deltagerDto.getDiscipliner());
+            deltager.setDiscipliner(discipliner);
         }
+
+        // Gem deltager entitet
+        Deltager savedDeltager = deltagerRepository.save(deltager);
+        return convertToDto(savedDeltager);
     }
 
-    public boolean deleteDeltager(UUID id) {
-        if (deltagerRepository.existsById(id)) {
-            deltagerRepository.deleteById(id);
-            return true;
-        } else {
-            return false;
+    // Tilføj disciplin til en eksisterende deltager
+    public DeltagerDto addDisciplinToDeltager(UUID deltagerId, UUID disciplinId) {
+        Deltager deltager = deltagerRepository.findById(deltagerId)
+                .orElseThrow(() -> new NotFoundException("Deltager not found with id: " + deltagerId));
+
+        Disciplin disciplin = disciplinRepository.findById(disciplinId)
+                .orElseThrow(() -> new NotFoundException("Disciplin not found with id: " + disciplinId));
+
+        List<Disciplin> discipliner = deltager.getDiscipliner(); // Get the existing list of discipliner
+        discipliner.add(disciplin); // Add the new disciplin to the list
+
+        deltager.setDiscipliner(discipliner); // Set the updated list back to the deltager
+
+        Deltager savedDeltager = deltagerRepository.save(deltager);
+        return convertToDto(savedDeltager);
+    }
+
+    // Hjælpefunktion til at konvertere ResultatDto til Resultat entiteter
+    private List<Resultat> convertToResultatEntities(List<ResultatDto> resultatDtos) {
+        if (resultatDtos == null) {
+            return Collections.emptyList(); // Return an empty list if resultatDtos is null
         }
+
+        return resultatDtos.stream()
+                .map(resultatDto -> new Resultat(resultatDto.getPlacering(), resultatDto.getResultat()))
+                .collect(Collectors.toList());
     }
 
-    private Deltager convertToEntity(DeltagerDto deltagerDto) {
-        return new Deltager(
-                deltagerDto.getId(),
-                deltagerDto.getNavn(),
-                deltagerDto.getKon(),
-                deltagerDto.getAlder(),
-                deltagerDto.getKlub(),
-                deltagerDto.getResultater(),
-                deltagerDto.getDiscipliner()
-        );
-    }
-
+    // Hjælpefunktion til at konvertere Deltager til DeltagerDto
     private DeltagerDto convertToDto(Deltager deltager) {
         return new DeltagerDto(
                 deltager.getId(),
@@ -84,6 +108,47 @@ public class DeltagerService {
                 deltager.getKon(),
                 deltager.getAlder(),
                 deltager.getKlub()
-                );
+        );
+    }
+
+    // Hjælpefunktion til at hente discipliner baseret på deres IDs
+    private List<Disciplin> fetchDiscipliner(List<UUID> disciplinIds) {
+        return disciplinIds.stream()
+                .map(disciplinId -> disciplinRepository.findById(disciplinId)
+                        .orElseThrow(() -> new NotFoundException("Disciplin not found with id: " + disciplinId)))
+                .collect(Collectors.toList());
+    }
+
+    // Hjælpefunktion til at konvertere DeltagerDto til Deltager entitet
+    private Deltager convertToEntity(DeltagerDto deltagerDto) {
+        Deltager deltager = new Deltager();
+        deltager.setNavn(deltagerDto.getNavn());
+        deltager.setAlder(deltagerDto.getAlder());
+        deltager.setKon(deltagerDto.getKon());
+        deltager.setKlub(deltagerDto.getKlub());
+        return deltager;
+    }
+
+    public boolean deleteDeltager(UUID id) {
+Optional<Deltager> deltagerOptional = deltagerRepository.findById(id);
+        if (deltagerOptional.isPresent()) {
+            deltagerRepository.deleteById(id);
+            return true;
+        } else {
+            return false;
+        }
+    }
+
+    public DeltagerDto getDeltagerById(UUID id) {
+        Deltager deltager = deltagerRepository.findById(id)
+                .orElseThrow(() -> new NotFoundException("Deltager not found with id: " + id));
+        return convertToDto(deltager);
+    }
+
+    public List<DeltagerDto> getAllDeltager() {
+        List<Deltager> deltagerList = deltagerRepository.findAll();
+        return deltagerList.stream()
+                .map(this::convertToDto)
+                .collect(Collectors.toList());
     }
 }

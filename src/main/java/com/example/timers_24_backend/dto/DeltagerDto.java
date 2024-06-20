@@ -18,8 +18,8 @@ public class DeltagerDto {
     private String kon;
     private int alder;
     private String klub;
-    private List<String> resultater;
-    private List<String> discipliner;
+    private List<ResultatDto> resultater;
+    private List<UUID> discipliner;
 
     public DeltagerDto( UUID id , String navn, String kon, int alder, String klub) {
         this.id = id;

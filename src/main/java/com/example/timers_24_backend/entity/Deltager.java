@@ -1,5 +1,6 @@
 package com.example.timers_24_backend.entity;
 
+import com.example.timers_24_backend.dto.ResultatDto;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -39,7 +40,7 @@ public class Deltager {
         this.klub = klub;
     }
 
-    public Deltager(UUID id, String navn, String kon, int alder, String klub, List<String> resultater, List<String> discipliner) {this.id = id;
+    public Deltager(UUID id, String navn, String kon, int alder, String klub, List<ResultatDto> resultater, List<UUID> discipliner) {this.id = id;
         this.navn = navn;
         this.kon = kon;
         this.alder = alder;
@@ -47,11 +48,14 @@ public class Deltager {
 
     }
 
-    public void setDiscipliner(List<String> discipliner) {
+
+
+
+    public void setResultater(List<Resultat> resultats) {
 
     }
 
-    public void setResultater(List<String> resultater) {
+    public void setDiscipliner(List<Disciplin> discipliner) {
 
     }
 }
