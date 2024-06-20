@@ -54,12 +54,12 @@ public class DeltagerController {
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<Void> deleteDeltager(@PathVariable UUID id) {
+    public String deleteDeltager(@PathVariable UUID id) {
         boolean deleted = deltagerService.deleteDeltager(id);
         if (deleted) {
-            return ResponseEntity.noContent().build();
+            return "Deltager slettet";
         } else {
-            return ResponseEntity.notFound().build();
+            return "Deltager ikke fundet";
         }
     }
 }
