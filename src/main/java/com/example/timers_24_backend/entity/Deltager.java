@@ -38,4 +38,20 @@ public class Deltager {
         this.alder = alder;
         this.klub = klub;
     }
+
+    public Deltager(UUID id, String navn, String kon, int alder, String klub, List<String> resultater, List<String> discipliner) {this.id = id;
+        this.navn = navn;
+        this.kon = kon;
+        this.alder = alder;
+        this.klub = klub;
+
+    }
+
+    public void setDiscipliner(List<String> discipliner) {
+
+    }
+
+    public void setResultater(List<String> resultater) {
+
+    }
 }
