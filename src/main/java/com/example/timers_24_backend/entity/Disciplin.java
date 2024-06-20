@@ -37,9 +37,8 @@ public class Disciplin {
 
     public Disciplin(UUID uuid, String s, String tid) {
 
+
     }
-
-
-
-
 }
+
+

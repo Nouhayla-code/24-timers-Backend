@@ -13,7 +13,7 @@ import java.util.List;
 import java.util.UUID;
 
 @RestController
-@RequestMapping("/api/disciplins")
+@RequestMapping("/api/disciplin")
 public class DisciplinController {
 
     private final DisciplinService disciplinService;

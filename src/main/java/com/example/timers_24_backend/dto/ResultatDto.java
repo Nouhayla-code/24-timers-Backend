@@ -1,38 +1,32 @@
 package com.example.timers_24_backend.dto;
 
+import com.example.timers_24_backend.entity.Deltager;
+import com.example.timers_24_backend.entity.Disciplin;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-import java.util.List;
+import java.time.LocalDate;
 import java.util.UUID;
 
 @Data
-@AllArgsConstructor
 @NoArgsConstructor
 public class ResultatDto {
 
-    private int placering;
-    private String resultat;
+    private UUID id;
+    private String resultattype;
+    private LocalDate dato;
+    private String resultatvaerdi;
+    private UUID deltagerId;
+    private UUID disciplinId;
 
-
-    // Getter for placering
-    public int getPlacering() {
-        return placering;
-    }
-
-    // Setter for placering
-    public void setPlacering(int placering) {
-        this.placering = placering;
-    }
-
-    // Getter for resultat
-    public String getResultat() {
-        return resultat;
-    }
-
-    // Setter for resultat
-    public void setResultat(String resultat) {
-        this.resultat = resultat;
+    // Constructor to convert from entity to DTO
+    public ResultatDto(UUID id, String resultattype, LocalDate dato, String resultatvaerdi, UUID deltagerId, UUID disciplinId) {
+        this.id = id;
+        this.resultattype = resultattype;
+        this.dato = dato;
+        this.resultatvaerdi = resultatvaerdi;
+        this.deltagerId = deltagerId;
+        this.disciplinId = disciplinId;
     }
 }

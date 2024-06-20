@@ -1,10 +1,8 @@
 package com.example.timers_24_backend.api;
 
 import com.example.timers_24_backend.dto.DeltagerDto;
-import com.example.timers_24_backend.dto.DisciplinDto;
 import com.example.timers_24_backend.service.DeltagerService;
 import jakarta.annotation.PostConstruct;
-import jakarta.xml.ws.Response;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
