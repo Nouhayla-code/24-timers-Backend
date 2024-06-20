@@ -30,7 +30,7 @@ public class Hotel {
     @OneToMany(mappedBy = "hotel", cascade = CascadeType.ALL, orphanRemoval = true)
     private Set<Room> rooms;
 
-    public Hotel(String name, String street, String city, int zip, String country) {
+    public Hotel(String name, String street, String city, int zip, String country , LocalDateTime created, LocalDateTime updated) {
 
         this.name = name;
         this.street = street;
