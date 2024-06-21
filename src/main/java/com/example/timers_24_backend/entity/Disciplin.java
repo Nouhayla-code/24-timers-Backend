@@ -19,6 +19,7 @@ public class Disciplin {
     private String navn;
     private String resultattype;
 
+
     @OneToMany(mappedBy = "disciplin", cascade = CascadeType.ALL)
     private List<Resultat> resultater;
 
@@ -29,4 +30,16 @@ public class Disciplin {
         this.navn = navn;
         this.resultattype = resultattype;
     }
+
+    public Disciplin(UUID disciplinId) {
+
+    }
+
+    public Disciplin(UUID uuid, String s, String tid) {
+
+    }
+
+
+
+
 }

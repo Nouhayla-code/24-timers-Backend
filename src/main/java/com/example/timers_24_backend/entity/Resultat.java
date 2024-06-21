@@ -36,4 +36,8 @@ public class Resultat {
         this.deltager = deltager;
         this.disciplin = disciplin;
     }
+
+    public Resultat(Object placering, Object resultat) {
+
+    }
 }
