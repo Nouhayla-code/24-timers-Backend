@@ -97,7 +97,7 @@ public class DeltagerService {
         }
 
         return resultatDtos.stream()
-                .map(resultatDto -> new Resultat(resultatDto.getPlacering(), resultatDto.getResultat()))
+                .map(this::convertToEntity) // Using method reference for clarity
                 .collect(Collectors.toList());
     }
 
@@ -130,6 +130,15 @@ public class DeltagerService {
         return deltager;
     }
 
+    private Resultat convertToEntity(ResultatDto resultatDto) {
+        // You need to define a constructor in your Resultat entity to match the fields you're passing
+        // Assuming a constructor with necessary fields exists in Resultat entity
+        Resultat resultat = new Resultat();
+        resultat.setResultattype(resultatDto.getResultattype());
+        resultat.setDato(resultatDto.getDato());
+        resultat.setResultatvaerdi(resultatDto.getResultatvaerdi());
+        return resultat;
+    }
     public boolean deleteDeltager(UUID id) {
         Optional<Deltager> deltagerOptional = deltagerRepository.findById(id);
         if (deltagerOptional.isPresent()) {

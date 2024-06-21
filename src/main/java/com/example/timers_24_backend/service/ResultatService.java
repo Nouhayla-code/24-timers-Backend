@@ -1,5 +1,6 @@
-import java.util.UUID;
-import org.springframework.stereotype.Service;
+package com.example.timers_24_backend.service;
+
+import com.example.timers_24_backend.dto.DeltagerDto;
 import com.example.timers_24_backend.dto.ResultatDto;
 import com.example.timers_24_backend.entity.Deltager;
 import com.example.timers_24_backend.entity.Disciplin;
@@ -8,50 +9,69 @@ import com.example.timers_24_backend.exception.NotFoundException;
 import com.example.timers_24_backend.repository.DeltagerRepository;
 import com.example.timers_24_backend.repository.DisciplinRepository;
 import com.example.timers_24_backend.repository.ResultatRepository;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+
+import java.util.List;
+import java.util.UUID;
+import java.util.stream.Collectors;
 
 @Service
 public class ResultatService {
 
-    private final DeltagerRepository deltagerRepository;
-    private final DisciplinRepository disciplinRepository;
     private final ResultatRepository resultatRepository;
+    private final DeltagerRepository DeltagerRepository;
 
-    public ResultatService(DeltagerRepository deltagerRepository, DisciplinRepository disciplinRepository, ResultatRepository resultatRepository) {
-        this.deltagerRepository = deltagerRepository;
-        this.disciplinRepository = disciplinRepository;
+    private final DisciplinRepository disciplinRepository;
+
+    @Autowired
+    public ResultatService(ResultatRepository resultatRepository, DeltagerRepository DeltagerRepository, DisciplinRepository disciplinRepository) {
         this.resultatRepository = resultatRepository;
+        this.DeltagerRepository = DeltagerRepository;
+        this.disciplinRepository = disciplinRepository;
     }
 
-    // Registrer et resultat for en deltager i en disciplin
-    public ResultatDto registrerResultat(UUID disciplinId, UUID deltagerId, ResultatDto resultatDto) {
-        Disciplin disciplin = findDisciplinById(disciplinId); // Find disciplin baseret på disciplinId
-        Deltager deltager = findDeltagerById(deltagerId); // Find deltager baseret på deltagerId
+    public List<ResultatDto> getAllResultater() {
+        List<Resultat> resultatList = resultatRepository.findAll();
+        return resultatList.stream()
+                .map(this::convertToDto)
+                .collect(Collectors.toList());
+    }
 
-        // Opret en ny Resultat entitet med de angivne detaljer
-        Resultat resultat = new Resultat();
-        resultat.setPlacering(resultatDto.getPlacering());
-        resultat.setResultat(resultatDto.getResultat());
-        resultat.setDeltager(deltager); // Sæt deltageren
-        resultat.setDisciplin(disciplin); // Sæt disciplinen
-
-        // Gem Resultat entiteten i databasen
+    public ResultatDto registrerResultat( ResultatDto resultatDto) {
+        Resultat resultat = convertToEntity(resultatDto);
         Resultat savedResultat = resultatRepository.save(resultat);
-
-        // Konverter den gemte Resultat entitet til ResultatDto og returnér
-        return new ResultatDto(savedResultat.getPlacering(), savedResultat.getResultat());
+        return convertToDto(savedResultat);
     }
 
-    // Hjælpefunktion til at finde Disciplin baseret på disciplinId
-    private Disciplin findDisciplinById(UUID disciplinId) {
-        return disciplinRepository.findById(disciplinId)
-                .orElseThrow(() -> new NotFoundException("Disciplin not found with id: " + disciplinId));
+    private Resultat convertToEntity(ResultatDto resultatDto) {
+        Deltager deltager = DeltagerRepository.findById(resultatDto.getDeltagerId())
+                .orElseThrow(() -> new NotFoundException("Deltager not found with id: " + resultatDto.getDeltagerId()));
+
+        Disciplin disciplin = disciplinRepository.findById(resultatDto.getDisciplinId())
+                .orElseThrow(() -> new NotFoundException("Disciplin not found with id: " + resultatDto.getDisciplinId()));
+         Resultat resultat = new Resultat ();
+            resultat.setResultattype(resultatDto.getResultattype());
+            resultat.setDato(resultatDto.getDato());
+            resultat.setResultatvaerdi(resultatDto.getResultatvaerdi());
+            resultat.setDeltager(deltager);
+            resultat.setDisciplin(disciplin);
+            return resultat;
+
     }
 
-    // Hjælpefunktion til at finde Deltager baseret på deltagerId
-    private Deltager findDeltagerById(UUID deltagerId) {
-        return deltagerRepository.findById(deltagerId)
-                .orElseThrow(() -> new NotFoundException("Deltager not found with id: " + deltagerId));
-    }
 
-    // Metoder til at implementere andre krævede funktionaliteter ville komme her
+    public ResultatDto convertToDto(Resultat resultat) {
+        UUID deltagerId = resultat.getDeltager() != null ? resultat.getDeltager().getId() : null;
+        UUID disciplinId = resultat.getDisciplin() != null ? resultat.getDisciplin().getId() : null;
+
+        return new ResultatDto(
+                resultat.getId(),
+                resultat.getResultattype(),
+                resultat.getDato(),
+                resultat.getResultatvaerdi(),
+                deltagerId,
+                disciplinId
+        );
+    }
 }

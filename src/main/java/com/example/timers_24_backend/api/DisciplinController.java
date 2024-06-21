@@ -13,7 +13,7 @@ import java.util.List;
 import java.util.UUID;
 
 @RestController
-@RequestMapping("/api/disciplins")
+@RequestMapping("/api/disciplin")
 public class DisciplinController {
 
     private final DisciplinService disciplinService;
@@ -71,7 +71,7 @@ public class DisciplinController {
         }
     }
 
-    @PutMapping("/{id}")
+    @PutMapping("/{id}/addDeltager")
     public ResponseEntity<DisciplinDto> addDeltagerToDisciplin(@PathVariable UUID id, @RequestBody List<UUID> deltagerId) {
         DisciplinDto disciplinDto = disciplinService.addDeltagerToDisciplin(id, deltagerId);
         if (disciplinDto != null) {
@@ -80,4 +80,6 @@ public class DisciplinController {
             return ResponseEntity.notFound().build();
         }
     }
+
+
 }
