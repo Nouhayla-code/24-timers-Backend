@@ -1,18 +1,15 @@
 package com.example.timers_24_backend.api;
-import com.example.timers_24_backend.dto.DeltagerDto;
 import com.example.timers_24_backend.dto.ResultatDto;
 import com.example.timers_24_backend.service.ResultatService;
 
 
-import org.springframework.beans.factory.annotation.Autowired;
 
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.net.URI;
 import java.util.List;
-import java.util.UUID;
+
 
 
 @RestController

@@ -17,16 +17,20 @@ public class ResultatDto {
     private String resultattype;
     private LocalDate dato;
     private String resultatvaerdi;
+
     private UUID deltagerId;
     private UUID disciplinId;
 
     // Constructor to convert from entity to DTO
-    public ResultatDto(UUID id, String resultattype, LocalDate dato, String resultatvaerdi, UUID deltagerId, UUID disciplinId) {
+    public ResultatDto(UUID id, String resultattype, LocalDate dato, String resultatvaerdi, UUID deltagerId, UUID disciplinId) { {
         this.id = id;
         this.resultattype = resultattype;
         this.dato = dato;
         this.resultatvaerdi = resultatvaerdi;
         this.deltagerId = deltagerId;
         this.disciplinId = disciplinId;
+
+
     }
+}
 }
