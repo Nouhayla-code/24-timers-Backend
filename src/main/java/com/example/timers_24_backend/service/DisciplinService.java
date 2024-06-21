@@ -1,10 +1,13 @@
 package com.example.timers_24_backend.service;
 
 import com.example.timers_24_backend.dto.DisciplinDto;
+import com.example.timers_24_backend.dto.ResultatDto;
 import com.example.timers_24_backend.entity.Deltager;
 import com.example.timers_24_backend.entity.Disciplin;
+import com.example.timers_24_backend.entity.Resultat;
 import com.example.timers_24_backend.repository.DeltagerRepository;
 import com.example.timers_24_backend.repository.DisciplinRepository;
+import com.example.timers_24_backend.repository.ResultatRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -20,10 +23,13 @@ public class DisciplinService {
     private final DisciplinRepository disciplinRepository;
     private final DeltagerRepository deltagerRepository;
 
+    private final ResultatRepository resultatRepository;
+
     @Autowired
-    public DisciplinService(DisciplinRepository disciplinRepository, DeltagerRepository deltagerRepository) {
+    public DisciplinService(DisciplinRepository disciplinRepository, DeltagerRepository deltagerRepository , ResultatRepository resultatRepository) {
         this.disciplinRepository = disciplinRepository;
         this.deltagerRepository = deltagerRepository;
+        this.resultatRepository = resultatRepository;
     }
 
     public void createDisciplins(List<Disciplin> disciplins) {
