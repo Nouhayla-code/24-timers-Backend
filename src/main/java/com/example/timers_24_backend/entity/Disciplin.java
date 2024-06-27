@@ -20,12 +20,16 @@ public class Disciplin {
     private String resultattype;
 
 
+    //One to many relation til disciplin i resultat
     @OneToMany(mappedBy = "disciplin", cascade = CascadeType.ALL)
     private List<Resultat> resultater;
 
+    //Many to many relation til disciplin i deltager
     @ManyToMany(mappedBy = "discipliner")
     private List<Deltager> deltagere;
 
+
+    //Constructor til at oprette en disciplin
     public Disciplin(String navn, String resultattype) {
         this.navn = navn;
         this.resultattype = resultattype;

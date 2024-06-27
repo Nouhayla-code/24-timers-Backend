@@ -81,11 +81,13 @@ public class DeltagerService {
         Disciplin disciplin = disciplinRepository.findById(disciplinId)
                 .orElseThrow(() -> new NotFoundException("Disciplin not found with id: " + disciplinId));
 
-        List<Disciplin> discipliner = deltager.getDiscipliner(); // Get the existing list of discipliner
-        discipliner.add(disciplin); // Add the new disciplin to the list
+        List<Disciplin> discipliner = deltager.getDiscipliner(); // Indhenter listen af discipliner fra deltageren
+        discipliner.add(disciplin); // Tilføj den nye disciplin til listen
 
-        deltager.setDiscipliner(discipliner); // Set the updated list back to the deltager
+        deltager.setDiscipliner(discipliner); // Opdater listen af discipliner på deltageren
 
+
+        // Gem deltager entitet
         Deltager savedDeltager = deltagerRepository.save(deltager);
         return convertToDto(savedDeltager);
     }
@@ -93,12 +95,12 @@ public class DeltagerService {
     // Hjælpefunktion til at konvertere ResultatDto til Resultat entiteter
     private List<Resultat> convertToResultatEntities(List<ResultatDto> resultatDtos) {
         if (resultatDtos == null) {
-            return Collections.emptyList(); // Return an empty list if resultatDtos is null
+            return Collections.emptyList(); // Returner en tom liste, hvis resultatDtos er null
         }
 
         return resultatDtos.stream()
-                .map(this::convertToEntity) // Using method reference for clarity
-                .collect(Collectors.toList());
+                .map(this::convertToEntity) // Konverter hvert ResultatDto til Resultat entitet
+                .collect(Collectors.toList()); // Returner en liste af Resultat entiteter
     }
 
     // Hjælpefunktion til at konvertere Deltager til DeltagerDto
@@ -130,46 +132,56 @@ public class DeltagerService {
         return deltager;
     }
 
+    // Hjælpefunktion til at konvertere Resultat til ResultatDto
     private Resultat convertToEntity(ResultatDto resultatDto) {
-        // You need to define a constructor in your Resultat entity to match the fields you're passing
-        // Assuming a constructor with necessary fields exists in Resultat entity
-        Resultat resultat = new Resultat();
-        resultat.setResultattype(resultatDto.getResultattype());
-        resultat.setDato(resultatDto.getDato());
-        resultat.setResultatvaerdi(resultatDto.getResultatvaerdi());
+        Resultat resultat = new Resultat(); // Opret ny Resultat entitet
+        resultat.setResultattype(resultatDto.getResultattype());// Sæt resultattype
+        resultat.setDato(resultatDto.getDato()); // Sæt dato
+        resultat.setResultatvaerdi(resultatDto.getResultatvaerdi()); // Sæt resultatværdi
         return resultat;
     }
+
+    // Slet deltager
     public boolean deleteDeltager(UUID id) {
-        Optional<Deltager> deltagerOptional = deltagerRepository.findById(id);
-        if (deltagerOptional.isPresent()) {
-            deltagerRepository.deleteById(id);
-            return true;
+        Optional<Deltager> deltagerOptional = deltagerRepository.findById(id); // Find deltageren med det givne id
+        if (deltagerOptional.isPresent()) { // Hvis deltageren findes
+            deltagerRepository.deleteById(id); // Slet deltageren
+            return true; // Returner true
         } else {
-            return false;
+            return false; // Returner false
         }
     }
 
-    public DeltagerDto getDeltagerById(UUID id) {
-        Deltager deltager = deltagerRepository.findById(id)
-                .orElseThrow(() -> new NotFoundException("Deltager not found with id: " + id));
-        return convertToDto(deltager);
+    // Hent deltager med det givne id
+    public DeltagerDto getDeltagerById(UUID id) { // Hent deltageren med det givne id
+        Deltager deltager = deltagerRepository.findById(id) // Find deltageren med det givne id
+                .orElseThrow(() -> new NotFoundException("Deltager not found with id: " + id)); // Hvis deltageren ikke findes, kast en NotFoundException
+        return convertToDto(deltager); // Konverter deltageren til en DeltagerDto og returner den
     }
 
-    public List<DeltagerDto> getAllDeltager() {
-        List<Deltager> deltagerList = deltagerRepository.findAll();
-        return deltagerList.stream()
-                .map(this::convertToDto)
-                .collect(Collectors.toList());
+    // Hent alle deltager
+    public List<DeltagerDto> getAllDeltager() { // Hent alle deltager
+        List<Deltager> deltagerList = deltagerRepository.findAll(); // Hent alle deltager fra databasen
+        return deltagerList.stream() // Konverter alle deltager til DeltagerDto og returner dem som en liste
+                .map(this::convertToDto)// Konverter hver deltager til en DeltagerDto
+                .collect(Collectors.toList()); // Returner en liste af DeltagerDto
     }
 
-    public List<DisciplinDto> getAllDiscipliner() {
-        List<Disciplin> disciplins = disciplinRepository.findAll();
-        return disciplins.stream()
-                .map(disciplin -> new DisciplinDto(
+    // Hent alle discipliner
+    public List<DisciplinDto> getAllDiscipliner() { // Hent alle discipliner
+        List<Disciplin> disciplins = disciplinRepository.findAll(); // Hent alle discipliner fra databasen
+        return disciplins.stream() // Konverter alle discipliner til DisciplinDto og returner dem som en liste
+                .map(disciplin -> new DisciplinDto( // Konverter hver disciplin til en DisciplinDto
                         disciplin.getId(),
                         disciplin.getNavn(),
                         disciplin.getResultattype(),
-                        disciplin.getDeltagere().stream().map(Deltager::getId).collect(Collectors.toList())))
-                .collect(Collectors.toList());
+                        disciplin.getDeltagere().stream().map(Deltager::getId).collect(Collectors.toList()))) // Hent alle deltageres id'er og returner dem som en liste
+                .collect(Collectors.toList()); // Returner en liste af DisciplinDto
+    }
+
+
+    // Hjælpefunktion til at konvertere Resultat til ResultatDto
+    public void saveDeltager(Deltager deltager1) {
+        deltagerRepository.save(deltager1);
     }
 }

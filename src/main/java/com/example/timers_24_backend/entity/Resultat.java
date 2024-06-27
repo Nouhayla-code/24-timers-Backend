@@ -22,30 +22,19 @@ public class Resultat {
     private String resultatvaerdi;
 
 
-
+    // Many to one relation til Deltagerid
     @ManyToOne
     @JoinColumn(name = "deltager_id")
     private Deltager deltager;
 
+    // Many to one relation til Disciplinid
     @ManyToOne
     @JoinColumn(name = "disciplin_id")
     private Disciplin disciplin;
 
-    public Resultat(String resultattype, LocalDate dato, String resultatvaerdi,
-                    Deltager deltager, Disciplin disciplin) {
-        this.resultattype = resultattype;
-        this.dato = dato;
-        this.resultatvaerdi = resultatvaerdi;
-        this.deltager = deltager;
-        this.disciplin = disciplin;
-
-
 
 
     }
 
-    public Resultat(Object placering, Object resultat) {
-        // Constructor with placering and resultat, which seems unused based on your provided code
 
-    }
-}
+

@@ -23,16 +23,21 @@ public class Deltager {
     private int alder;
     private String klub;
 
+    // One to many relation til Resultat
     @OneToMany(mappedBy = "deltager", cascade = CascadeType.ALL)
     private List<Resultat> resultater;
 
 
+
+    // Many to many relation til Disciplin
     @ManyToMany
     @JoinTable(
             name = "deltager_disciplin",
             joinColumns = @JoinColumn(name = "deltager_id"),
             inverseJoinColumns = @JoinColumn(name = "disciplin_id")
     )
+
+    // List of discipliner
     private List<Disciplin> discipliner;
 
     public Deltager(String navn, String kon, int alder, String klub) {
@@ -50,7 +55,9 @@ public class Deltager {
 
     }
 
-
+    // Constructor to convert from entity to DTO
+    public Deltager(UUID uuid, String s, String male, int i, String testKlub) {
+    }
 
 
     public void setResultater(List<Resultat> resultats) {

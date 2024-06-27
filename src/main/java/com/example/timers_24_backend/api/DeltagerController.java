@@ -23,6 +23,8 @@ public class DeltagerController {
         this.deltagerService = deltagerService;
     }
 
+
+    // init date til at lave noget mockata når vi starter vores applikation
     @PostConstruct
     public void init() {
         List<DeltagerDto> deltagerDtoList = new ArrayList<>();
@@ -58,6 +60,8 @@ public class DeltagerController {
     }
 
 
+
+    // Hent alle deltagere
     @GetMapping
     public ResponseEntity<List<DeltagerDto>> getAllDeltager() {
         List<DeltagerDto> deltagerDtoList = deltagerService.getAllDeltager();
@@ -65,6 +69,7 @@ public class DeltagerController {
     }
 
 
+    // Hent deltager med id
     @GetMapping("/{id}")
     public ResponseEntity<DeltagerDto> getDeltagerById(@PathVariable UUID id) {
         DeltagerDto deltagerDto = deltagerService.getDeltagerById(id);
@@ -75,12 +80,15 @@ public class DeltagerController {
         }
     }
 
+    // Opret ny deltager
     @PostMapping
     public ResponseEntity<DeltagerDto> createDeltager(@RequestBody DeltagerDto deltagerDto) {
         DeltagerDto createdDeltager = deltagerService.createDeltager(deltagerDto);
         return ResponseEntity.status(HttpStatus.CREATED).body(createdDeltager);
     }
 
+
+    // Opdater deltager med id
     @PutMapping("/{id}")
     public ResponseEntity<DeltagerDto> updateDeltager(@PathVariable UUID id, @RequestBody DeltagerDto deltagerDto) {
         DeltagerDto updatedDeltager = deltagerService.updateDeltager(id, deltagerDto);
@@ -91,6 +99,8 @@ public class DeltagerController {
         }
     }
 
+
+    // Tilføj disciplin til deltager
     @PutMapping("/{deltagerId}/addDisciplin/{disciplinId}")
     public String addDisciplinToDeltager(@PathVariable UUID deltagerId, @PathVariable UUID disciplinId) {
         DeltagerDto updatedDeltager = deltagerService.addDisciplinToDeltager(deltagerId, disciplinId);
@@ -101,6 +111,8 @@ public class DeltagerController {
         }
     }
 
+
+    // Slet deltager med id
     @DeleteMapping("/{id}")
     public String deleteDeltager(@PathVariable UUID id) {
         boolean deleted = deltagerService.deleteDeltager(id);

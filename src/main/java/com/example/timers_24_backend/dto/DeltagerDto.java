@@ -1,7 +1,5 @@
 package com.example.timers_24_backend.dto;
 
-import com.example.timers_24_backend.entity.Disciplin;
-import com.example.timers_24_backend.entity.Resultat;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;

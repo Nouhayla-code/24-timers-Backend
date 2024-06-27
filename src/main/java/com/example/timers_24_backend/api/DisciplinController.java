@@ -23,6 +23,8 @@ public class DisciplinController {
         this.disciplinService = disciplinService;
     }
 
+
+    // Initialiserer discipliner i databasen
     @PostConstruct
     public void init() {
         List<Disciplin> disciplins = new ArrayList<>();
@@ -55,12 +57,15 @@ public class DisciplinController {
         disciplinService.createDisciplins(disciplins);
     }
 
+    // Opretter en disciplin
     @GetMapping
     public ResponseEntity<List<DisciplinDto>> getAllDiscipliner() {
         List<DisciplinDto> disciplinDtoList = disciplinService.getAllDiscipliner();
         return ResponseEntity.ok().body(disciplinDtoList);
     }
 
+
+    // Opretter en disciplin med en given disciplinDto og returnerer disciplinDto hvis det er muligt
     @GetMapping("/{id}")
     public ResponseEntity<DisciplinDto> getDisciplin(@PathVariable UUID id) {
         DisciplinDto disciplinDto = disciplinService.getDisciplin(id);
@@ -71,6 +76,7 @@ public class DisciplinController {
         }
     }
 
+    // Tilføjer en deltager til en disciplin og returnerer disciplinDto hvis det er muligt
     @PutMapping("/{id}/addDeltager")
     public ResponseEntity<DisciplinDto> addDeltagerToDisciplin(@PathVariable UUID id, @RequestBody List<UUID> deltagerId) {
         DisciplinDto disciplinDto = disciplinService.addDeltagerToDisciplin(id, deltagerId);

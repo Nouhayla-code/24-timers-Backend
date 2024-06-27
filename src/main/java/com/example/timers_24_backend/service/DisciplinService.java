@@ -1,10 +1,10 @@
 package com.example.timers_24_backend.service;
 
 import com.example.timers_24_backend.dto.DisciplinDto;
-import com.example.timers_24_backend.dto.ResultatDto;
+
 import com.example.timers_24_backend.entity.Deltager;
 import com.example.timers_24_backend.entity.Disciplin;
-import com.example.timers_24_backend.entity.Resultat;
+
 import com.example.timers_24_backend.repository.DeltagerRepository;
 import com.example.timers_24_backend.repository.DisciplinRepository;
 import com.example.timers_24_backend.repository.ResultatRepository;
@@ -32,44 +32,57 @@ public class DisciplinService {
         this.resultatRepository = resultatRepository;
     }
 
+    // Opret ny disciplin
     public void createDisciplins(List<Disciplin> disciplins) {
         disciplinRepository.saveAll(disciplins);
     }
 
+
+    // Hent alle discipliner
     public List<DisciplinDto> getAllDiscipliner() {
-        List<Disciplin> disciplins = disciplinRepository.findAll();
-        List<DisciplinDto> disciplinDtos = new ArrayList<>();
-        for (Disciplin disciplin : disciplins) {
-            List<UUID> deltagereId = disciplin.getDeltagere().stream()
-                    .map(Deltager::getId)
-                    .collect(Collectors.toList());
-            disciplinDtos.add(new DisciplinDto(disciplin.getId(), disciplin.getNavn(), disciplin.getResultattype(), deltagereId));
+        List<Disciplin> disciplins = disciplinRepository.findAll(); // Hent alle discipliner fra databasen
+        List<DisciplinDto> disciplinDtos = new ArrayList<>(); // Opret en liste til at gemme DTO'er
+        for (Disciplin disciplin : disciplins) { // Konverter hver disciplin til en DTO og tilføj til listen
+            List<UUID> deltagereId = disciplin.getDeltagere().stream() // Hent alle deltageres id'er
+                    .map(Deltager::getId) // Konverter deltager til id
+                    .collect(Collectors.toList()); // Gem i liste
+            disciplinDtos.add(new DisciplinDto(disciplin.getId(), disciplin.getNavn(), disciplin.getResultattype(), deltagereId)); // Tilføj DTO til listen
         }
         return disciplinDtos;
     }
 
-    public DisciplinDto getDisciplin(UUID id) {
-        Disciplin disciplin = disciplinRepository.findById(id)
-                .orElseThrow(() -> new NoSuchElementException("Disciplin not found with id: " + id));
 
-        List<UUID> deltagereId = disciplin.getDeltagere().stream()
-                .map(Deltager::getId)
-                .collect(Collectors.toList());
+    // Hent disciplin med id
+    public DisciplinDto getDisciplin(UUID id) { // Hent disciplin med id
+        Disciplin disciplin = disciplinRepository.findById(id) // Hent disciplin fra databasen
+                .orElseThrow(() -> new NoSuchElementException("Disciplin not found with id: " + id)); // Hvis disciplin ikke findes, kast exception
 
-        return new DisciplinDto(disciplin.getId(), disciplin.getNavn(), disciplin.getResultattype(), deltagereId);
+        List<UUID> deltagereId = disciplin.getDeltagere().stream() // Hent alle deltageres id'er
+                .map(Deltager::getId) // Konverter deltager til id
+                .collect(Collectors.toList()); // Gem i liste
+
+        return new DisciplinDto(disciplin.getId(), disciplin.getNavn(), disciplin.getResultattype(), deltagereId); // Returner DTO
     }
 
-    public DisciplinDto addDeltagerToDisciplin(UUID id, List<UUID> deltagerId) {
-        Disciplin disciplin = disciplinRepository.findById(id)
-                .orElseThrow(() -> new NoSuchElementException("Disciplin not found with id: " + id));
-        for (UUID uuid : deltagerId) {
-            Deltager deltager = deltagerRepository.findById(uuid)
-                    .orElseThrow(() -> new NoSuchElementException("Deltager not found with id: " + uuid));
-            disciplin.getDeltagere().add(deltager);
-            deltager.getDiscipliner().add(disciplin);
+
+    // Tilføj deltager til disciplin
+    public DisciplinDto addDeltagerToDisciplin(UUID id, List<UUID> deltagerId) { // Tilføj deltager til disciplin
+        Disciplin disciplin = disciplinRepository.findById(id) // Hent disciplin fra databasen
+                .orElseThrow(() -> new NoSuchElementException("Disciplin not found with id: " + id)); // Hvis disciplin ikke findes, kast exception
+        for (UUID uuid : deltagerId) { // For hver deltager id
+            Deltager deltager = deltagerRepository.findById(uuid) // Hent deltager fra databasen
+                    .orElseThrow(() -> new NoSuchElementException("Deltager not found with id: " + uuid)); // Hvis deltager ikke findes, kast exception
+            disciplin.getDeltagere().add(deltager); // Tilføj deltager til disciplin
+            deltager.getDiscipliner().add(disciplin); // Tilføj disciplin til deltager
         }
-        disciplinRepository.save(disciplin);
-        return new DisciplinDto(disciplin.getId(), disciplin.getNavn(), disciplin.getResultattype(),
-                disciplin.getDeltagere().stream().map(Deltager::getId).collect(Collectors.toList()));
+        disciplinRepository.save(disciplin); // Gem disciplin
+        return new DisciplinDto(disciplin.getId(), disciplin.getNavn(), disciplin.getResultattype(), // Returner DTO
+                disciplin.getDeltagere().stream().map(Deltager::getId).collect(Collectors.toList())); // Hent alle deltageres id'er og returner dem som en liste
+    }
+
+
+
+    public void saveDisciplin(Disciplin disciplin2) { // Gem disciplin
+        disciplinRepository.save(disciplin2);
     }
 }
